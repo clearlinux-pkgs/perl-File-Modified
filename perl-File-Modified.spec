@@ -4,15 +4,15 @@
 #
 Name     : perl-File-Modified
 Version  : 0.10
-Release  : 1
+Release  : 2
 URL      : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libf/libfile-modified-perl/libfile-modified-perl_0.10-1.debian.tar.xz
 Summary  : 'checks intelligently if files have changed'
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
-Requires: perl-File-Modified-license
-Requires: perl-File-Modified-man
+Requires: perl-File-Modified-license = %{version}-%{release}
+BuildRequires : buildreq-cpan
 
 %description
 File::Modified version 0.02
@@ -22,6 +22,15 @@ This module provides an easy way for long running processes
 the last time it was checked. Also, some persistence now
 allows you to use it as a more general caching mechanism.
 
+%package dev
+Summary: dev components for the perl-File-Modified package.
+Group: Development
+Provides: perl-File-Modified-devel = %{version}-%{release}
+
+%description dev
+dev components for the perl-File-Modified package.
+
+
 %package license
 Summary: license components for the perl-File-Modified package.
 Group: Default
@@ -30,19 +39,11 @@ Group: Default
 license components for the perl-File-Modified package.
 
 
-%package man
-Summary: man components for the perl-File-Modified package.
-Group: Default
-
-%description man
-man components for the perl-File-Modified package.
-
-
 %prep
-tar -xf %{SOURCE1}
-cd ..
 %setup -q -n File-Modified-0.10
-mkdir -p %{_topdir}/BUILD/File-Modified-0.10/deblicense/
+cd ..
+%setup -q -T -D -n File-Modified-0.10 -b 1
+mkdir -p deblicense/
 mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/File-Modified-0.10/deblicense/
 
 %build
@@ -67,13 +68,13 @@ make TEST_VERBOSE=1 test
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/doc/perl-File-Modified
-cp LICENSE %{buildroot}/usr/share/doc/perl-File-Modified/LICENSE
-cp deblicense/copyright %{buildroot}/usr/share/doc/perl-File-Modified/deblicense_copyright
+mkdir -p %{buildroot}/usr/share/package-licenses/perl-File-Modified
+cp LICENSE %{buildroot}/usr/share/package-licenses/perl-File-Modified/LICENSE
+cp deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-File-Modified/deblicense_copyright
 if test -f Makefile.PL; then
-make pure_install PERL_INSTALL_ROOT=%{buildroot}
+make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
-./Build install --installdirs=site --destdir=%{buildroot}
+./Build install --installdirs=vendor --destdir=%{buildroot}
 fi
 find %{buildroot} -type f -name .packlist -exec rm -f {} ';'
 find %{buildroot} -depth -type d -exec rmdir {} 2>/dev/null ';'
@@ -82,13 +83,13 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/site_perl/5.26.1/File/Modified.pm
+/usr/lib/perl5/vendor_perl/5.26.1/File/Modified.pm
 
-%files license
-%defattr(-,root,root,-)
-/usr/share/doc/perl-File-Modified/LICENSE
-/usr/share/doc/perl-File-Modified/deblicense_copyright
-
-%files man
+%files dev
 %defattr(-,root,root,-)
 /usr/share/man/man3/File::Modified.3
+
+%files license
+%defattr(0644,root,root,0755)
+/usr/share/package-licenses/perl-File-Modified/LICENSE
+/usr/share/package-licenses/perl-File-Modified/deblicense_copyright
