@@ -4,11 +4,11 @@
 #
 Name     : perl-File-Modified
 Version  : 0.10
-Release  : 9
+Release  : 10
 URL      : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libf/libfile-modified-perl/libfile-modified-perl_0.10-1.debian.tar.xz
-Summary  : 'checks intelligently if files have changed'
+Summary  : checks intelligently if files have changed
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
 Requires: perl-File-Modified-license = %{version}-%{release}
@@ -26,6 +26,7 @@ allows you to use it as a more general caching mechanism.
 Summary: dev components for the perl-File-Modified package.
 Group: Development
 Provides: perl-File-Modified-devel = %{version}-%{release}
+Requires: perl-File-Modified = %{version}-%{release}
 
 %description dev
 dev components for the perl-File-Modified package.
@@ -44,7 +45,7 @@ license components for the perl-File-Modified package.
 cd ..
 %setup -q -T -D -n File-Modified-0.10 -b 1
 mkdir -p deblicense/
-mv %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/File-Modified-0.10/deblicense/
+cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/File-Modified-0.10/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
