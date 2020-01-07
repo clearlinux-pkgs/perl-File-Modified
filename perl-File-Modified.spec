@@ -4,14 +4,15 @@
 #
 Name     : perl-File-Modified
 Version  : 0.10
-Release  : 12
+Release  : 13
 URL      : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source0  : https://cpan.metacpan.org/authors/id/N/NE/NEILB/File-Modified-0.10.tar.gz
 Source1  : http://http.debian.net/debian/pool/main/libf/libfile-modified-perl/libfile-modified-perl_0.10-1.debian.tar.xz
-Summary  : checks intelligently if files have changed
+Summary  : 'checks intelligently if files have changed'
 Group    : Development/Tools
 License  : Artistic-1.0 Artistic-1.0-Perl GPL-1.0
 Requires: perl-File-Modified-license = %{version}-%{release}
+Requires: perl-File-Modified-perl = %{version}-%{release}
 BuildRequires : buildreq-cpan
 
 %description
@@ -40,18 +41,28 @@ Group: Default
 license components for the perl-File-Modified package.
 
 
+%package perl
+Summary: perl components for the perl-File-Modified package.
+Group: Default
+Requires: perl-File-Modified = %{version}-%{release}
+
+%description perl
+perl components for the perl-File-Modified package.
+
+
 %prep
 %setup -q -n File-Modified-0.10
-cd ..
-%setup -q -T -D -n File-Modified-0.10 -b 1
+cd %{_builddir}
+tar xf %{_sourcedir}/libfile-modified-perl_0.10-1.debian.tar.xz
+cd %{_builddir}/File-Modified-0.10
 mkdir -p deblicense/
-cp -r %{_topdir}/BUILD/debian/* %{_topdir}/BUILD/File-Modified-0.10/deblicense/
+cp -r %{_builddir}/debian/* %{_builddir}/File-Modified-0.10/deblicense/
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
+export LANG=C.UTF-8
 if test -f Makefile.PL; then
 %{__perl} Makefile.PL
 make  %{?_smp_mflags}
@@ -61,7 +72,7 @@ else
 fi
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
@@ -70,8 +81,8 @@ make TEST_VERBOSE=1 test
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/perl-File-Modified
-cp LICENSE %{buildroot}/usr/share/package-licenses/perl-File-Modified/LICENSE
-cp deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-File-Modified/deblicense_copyright
+cp %{_builddir}/File-Modified-0.10/LICENSE %{buildroot}/usr/share/package-licenses/perl-File-Modified/4b17c72c9423b73ac0db0e2ca682554614efd516
+cp %{_builddir}/File-Modified-0.10/deblicense/copyright %{buildroot}/usr/share/package-licenses/perl-File-Modified/f13ca1b4792d204a3abf16816cb1f8adabb34cba
 if test -f Makefile.PL; then
 make pure_install PERL_INSTALL_ROOT=%{buildroot} INSTALLDIRS=vendor
 else
@@ -84,7 +95,6 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files
 %defattr(-,root,root,-)
-/usr/lib/perl5/vendor_perl/5.28.2/File/Modified.pm
 
 %files dev
 %defattr(-,root,root,-)
@@ -92,5 +102,9 @@ find %{buildroot} -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/perl-File-Modified/LICENSE
-/usr/share/package-licenses/perl-File-Modified/deblicense_copyright
+/usr/share/package-licenses/perl-File-Modified/4b17c72c9423b73ac0db0e2ca682554614efd516
+/usr/share/package-licenses/perl-File-Modified/f13ca1b4792d204a3abf16816cb1f8adabb34cba
+
+%files perl
+%defattr(-,root,root,-)
+/usr/lib/perl5/vendor_perl/5.30.1/File/Modified.pm
